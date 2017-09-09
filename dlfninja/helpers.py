@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import pickle
 
 import requests
@@ -52,3 +54,11 @@ def query_name_overview(subtree):
 def request_page_content(url):
     req = requests.get(url)
     return req
+
+
+def query_name_episode(html_tree):
+    return xpath_query_single_element(html_tree, '//div[2]/h3/a/span/text()')
+
+
+def query_url_episode(html_tree):
+    return xpath_query_single_element(html_tree, '//div[2]/h3/a/@href')
