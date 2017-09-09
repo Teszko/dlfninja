@@ -2,15 +2,17 @@ class Program:
     name = 'unknown'
     url = None
     date = None
-    nachhoeren_url = None
     details = None
+    id = None
+    episodes = []
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, id=None):
         if name is not None:
             self.name = name
+        self.id = id
 
     def __str__(self):
-        return "<name=\"%s\" date=\"%s\" url=\"%s\">" % (self.name, self.date, self.url)
+        return "<id=\"%d\" name=\"%s\" date=\"%s\" url=\"%s\">" % (self.id, self.name, self.date, self.url)
 
     def set_name(self, name):
         self.name = name
@@ -21,9 +23,15 @@ class Program:
     def set_date(self, date):
         self.date = date
 
-    def set_nachhoeren_url(self, nachhoeren_url):
-        self.nachhoeren_url = nachhoeren_url
-
     def set_details(self, details):
         self.details = details
 
+    def add_episode(self, episode):
+        self.episodes.append(episode)
+
+    def clear_episodes(self):
+        del self.episodes[:]
+
+    def print_episodes(self):
+        for episode in self.episodes:
+            print(episode)
