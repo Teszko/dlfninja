@@ -1,8 +1,12 @@
-import dlfninja.core as dlf
-from dlfninja.curses import Menu, Entry, Banner
 import curses
 
+import dlfninja.core as dlf
+import dlfninja.curses as dlfcurses
+from dlfninja.curses import init_overview_menu, init_episodes_menu
+
+
 def main(stdscr):
+
     stdscr.keypad(True)
     curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_BLACK)
 
@@ -11,33 +15,29 @@ def main(stdscr):
     scr_height = curses.LINES
     scr_width = curses.COLS
 
-    menu = Menu()
-    menu.init(0, scr_height // 2, scr_width, scr_height - scr_height // 2)
-    menu.set_title(" Alle Sendungen ")
-    menu.set_subtext(" quit(q)  play/pause(space) ")
+    init_overview_menu(dlf.programs, scr_width, scr_height)
 
-    for prog in dlf.programs:
-        entry = Entry()
-        entry.set_text(prog.name)
-        entry.set_text_right(prog.date)
-        menu.add_entry(entry)
-
-    banner = Banner()
+    banner = dlfcurses.Banner()
 
     stdscr.refresh()
-    menu.draw()
+    dlfcurses.overview_menu.draw()
     banner.draw()
     while True:
         c = stdscr.getch()
+
         if c == ord('q'):
             break  # Exit Program
         elif c == curses.KEY_UP or c == ord('k'):
-            menu.scroll_up()
+            dlfcurses.active_menu.scroll_up()
         elif c == curses.KEY_DOWN or c == ord('j'):
-            menu.scroll_down()
+            dlfcurses.active_menu.scroll_down()
+        elif c == curses.KEY_RIGHT:
+            dlfcurses.overview_menu.expand_element()
+        elif c == curses.KEY_LEFT:
+            dlfcurses.active_menu = dlfcurses.overview_menu
 
         stdscr.refresh()
-        menu.draw()
+        dlfcurses.active_menu.draw()
         banner.draw()
 
 
