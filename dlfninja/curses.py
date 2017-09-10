@@ -1,5 +1,6 @@
 import curses
 from dlfninja.core import get_page_tree, update_episode_list
+import dlfninja.audio as audio
 
 BANNER = """
  ______   _____     ________    ____  _____  _____  ____  _____     _____     _      
@@ -57,9 +58,11 @@ class Menu:
     pos_x = 0
     pos_y = 0
     max_lines = 0
+    type = None
 
-    def __init__(self):
+    def __init__(self, type):
         self.entries = []
+        self.type = type
 
     def set_title(self, title):
         self.title = title
@@ -119,7 +122,7 @@ class Menu:
             else:
                 color = curses.color_pair(0)
                 if entry.program and entry.program.disabled:
-                    color = curses.color_pair(2)
+                    color =  curses.color_pair(2)
                 if entry.text is not None:
                     self.win.addstr(i+1, 3, entry.text, color)
                 if entry.text_right is not None:
@@ -132,14 +135,20 @@ class Menu:
 
     def expand_element(self):
         selected_entry = self.entries[self.selected]
-        if selected_entry.url is not None:
-            init_episodes_menu(selected_entry, curses.COLS, curses.LINES)
+        if self.type == 'overview':
+            if selected_entry.url is not None:
+                init_episodes_menu(selected_entry, curses.COLS, curses.LINES)
+        if self.type == 'episodes':
+            if selected_entry.url is not None:
+                audio.null()
+                audio.set_uri(selected_entry.url)
+                audio.play()
 
 
 def init_overview_menu(programs, scr_width, scr_height):
     global overview_menu
     global active_menu
-    overview_menu = Menu()
+    overview_menu = Menu('overview')
     active_menu = overview_menu
     overview_menu.init(0, scr_height // 2, scr_width, scr_height - scr_height // 2)
     overview_menu.set_title(" Alle Sendungen({}) ".format(len(programs)))
@@ -158,7 +167,7 @@ def init_episodes_menu(entry, scr_width, scr_height):
     global episodes_menu
     global active_menu
     active_menu.win.clear()
-    episodes_menu = Menu()
+    episodes_menu = Menu('episodes')
     active_menu = episodes_menu
 
     episodes_tree = get_page_tree('http://www.deutschlandfunk.de/'+entry.url)
