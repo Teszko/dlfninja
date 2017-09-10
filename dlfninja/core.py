@@ -54,5 +54,8 @@ def update_programs_list(overview_tree):
         subtree = etree.ElementTree(program_tree)
         new_program.set_name(query_name_overview(subtree))
         new_program.set_date(query_date_overview(subtree))
-        new_program.set_url(query_url_overview(subtree))
+        url = query_url_overview(subtree)
+        new_program.set_url(url)
+        if url is None:
+            new_program.set_disabled()
         programs.append(new_program)

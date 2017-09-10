@@ -5,6 +5,7 @@ class Program:
     details = None
     id = None
     episodes = []
+    disabled = False
 
     def __init__(self, name=None, id=None):
         if name is not None:
@@ -35,3 +36,6 @@ class Program:
     def print_episodes(self):
         for episode in self.episodes:
             print(episode)
+
+    def set_disabled(self):
+        self.disabled = True
